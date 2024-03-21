@@ -1,0 +1,12 @@
+
+.DS_Store
+*.pyc
+/doc/*.ipynb
+/rsc
+/out
+src/old
+src/algos/dilca_dp_final.py
+src/dilca_test.py
+doc/roadmap.md
+src/dilca_fair_test.ipynb
+src/libs
