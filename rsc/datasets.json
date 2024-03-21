@@ -1,0 +1,128 @@
+{
+	"adult": {
+		"filename": "adult/adult",
+		"target": -1,
+		"sep": ",",
+		"mv_label": "?",
+		"ext": ".data",
+		"header": false,
+		"sensitives": {
+			"8": "race",
+			"9": "sex"
+		},
+		"pos_label": ">50K"
+	}, 
+	"german": {
+		"filename": "statlog german credit/german",
+		"target": -1,
+		"sep": " ",
+		"ext": ".data",
+		"header": false,
+		"sensitives": {
+			"8": "sex_status"
+		}, 
+		"pos_label": 1
+	},
+	"communities": {
+		"filename": "communities and crime/communities",
+		"target": -1,
+		"sep": ",",
+		"mv_label": "?",
+		"ext": ".data",
+		"header": false,
+		"sensitives": {
+			
+		}
+	},
+	"bank_marketing": {
+		"filename": "bank marketing/bank/bank-full",
+		"target": -1,
+		"sep": ";",
+		"mv_label": "unknown",
+		"ext": ".csv",
+		"header": true,
+		"sensitives": {
+			"2": "marital_status"
+		},
+		"pos_label": "yes"
+	},
+	"student_performance": {
+		"filename": "student performance/student/student-merge",
+		"target": -1,
+		"sep": ";",
+		"ext": ".csv",
+		"header": true,
+		"sensitives": {
+			"1": "sex"
+		}
+	},
+	"toy_example": {
+		"filename": "toy_example",
+		"target": -1,
+		"sep": ",",
+		"ext": ".csv",
+		"header": true,
+		"sensitives": {
+			"0": "sex"
+		}
+	},
+	"obesity": {
+		"filename": "obesity",
+		"target": -1,
+		"sep": ",",
+		"ext": ".csv",
+		"header": true,
+		"sensitives": {
+			"0":"gender"
+		},
+		"pos_label": "Normal_Weight"
+	},
+	"students_dropout": {
+		"filename": "students_dropout",
+		"target": -1,
+		"sep": ";",
+		"ext": ".csv",
+		"header": true,
+		"sensitives": {
+			"0":"marital_status",
+			"7": "nationality",
+			"17": "gender"
+		},
+		"pos_label": "Graduate"
+	},
+	"hepatitis": {
+		"filename": "hepatitis/hepatitis",
+		"target": 0,
+		"sep": ",",
+		"ext": ".data",
+		"header": false,
+		"mv_label": "?",
+		"sensitives": {
+			"2": "sex"
+		},
+		"pos_label": 2
+	},
+	"credit_card": {
+		"filename": "credit_card", 
+		"target": -1,
+		"sep": ";",
+		"ext": ".csv",
+		"header": true,
+		"sensitives": {
+			"1": "sex",
+			"3": "marital_status"
+		},
+		"pos_label": 0
+	},
+	"titanic": {
+		"filename": "titanic",
+		"target": 0,
+		"sep": ";",
+		"ext": ".csv",
+		"header": true,
+		"sensitives": {
+			"2": "sex"
+		},
+		"pos_label": 1
+	}
+}
