@@ -56,16 +56,6 @@
 			"1": "sex"
 		}
 	},
-	"toy_example": {
-		"filename": "toy_example",
-		"target": -1,
-		"sep": ",",
-		"ext": ".csv",
-		"header": true,
-		"sensitives": {
-			"0": "sex"
-		}
-	},
 	"obesity": {
 		"filename": "obesity",
 		"target": -1,
