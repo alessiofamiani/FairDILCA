@@ -24,6 +24,10 @@ from utils.metrics import compute_groups_means
 import warnings
 warnings.filterwarnings("ignore")
 
+
+SENSITIVE_COLORS = [plt.cm.Dark2(i) for i in range(8)]
+TARGET_COLORS = [plt.cm.tab10(i) for i in range(10)]
+
 # ------------------------------------
 #        CORRELATION REMOVER
 # ------------------------------------
@@ -95,8 +99,8 @@ def cr_exps(X, Y, exp_no, datasets, original_dataset, s, objs_distances_dilca, o
         labels_sensitive = original_dataset[s]
         fig_sensitive, ax_sensitive = plt.subplots(figsize=(15, 10), dpi=300)
         fig_target, ax_target = plt.subplots(figsize=(15, 10), dpi=300)
-        plot_tsne(z, labels_sensitive, ax_sensitive)
-        plot_tsne(z, Y, ax_target)
+        plot_tsne(z, labels_sensitive, ax_sensitive, SENSITIVE_COLORS)
+        plot_tsne(z, Y, ax_target, TARGET_COLORS)
         fig_sensitive.tight_layout()
         fig_target.tight_layout()
         fig_sensitive.savefig("out/results/competitors/{}/tsne_CR_s{}_a{}.png".format(dataset, datasets[dataset]['sensitives'][str(s)], alpha), bbox_inches='tight', dpi=300)
@@ -117,10 +121,11 @@ def cr_exps(X, Y, exp_no, datasets, original_dataset, s, objs_distances_dilca, o
     
     # 3.2 Obtaining means  
     means_cr, means_MaG_Migs_cr, groups, group_sizes, majority_group = compute_groups_means(original_dataset, s, objs_distances_cr)
+    means_cr_nn, means_MaG_Migs_cr_nn, groups, group_sizes, majority_group = compute_groups_means(original_dataset, s, objs_distances_cr, normalise=False)
     end_time = time()
     t_sec = end_time - start_time
 
-    return means_cr, means_MaG_Migs_cr, t_sec, p_dilca, p_original, objs_distances_cr, z
+    return means_cr, means_MaG_Migs_cr, means_cr_nn, means_MaG_Migs_cr_nn, t_sec, p_dilca, p_original, objs_distances_cr, z
 
 # ------------------------------------
 #             EXPERIMENTS
@@ -223,18 +228,18 @@ def main():
                 labels_sensitive = X[s]
                 fig_sensitive, ax_sensitive = plt.subplots(figsize=(15, 10), dpi=300)
                 fig_target, ax_target = plt.subplots(figsize=(15, 10), dpi=300)
-                plot_tsne(z, labels_sensitive, ax_sensitive)
-                plot_tsne(z, Y, ax_target)
+                plot_tsne(z, labels_sensitive, ax_sensitive, SENSITIVE_COLORS)
+                plot_tsne(z, Y, ax_target, TARGET_COLORS)
                 fig_sensitive.tight_layout()
                 fig_target.tight_layout()
                 fig_sensitive.savefig("out/results/competitors/{}/tsne_original_{}_s{}.png".format(dname, dname, datasets[dname]['sensitives'][str(s)]), bbox_inches='tight', dpi=300)
-                fig_target.savefig("out/results/competitors/{}/tsne_original_{}_target.png".format(dname, dname), bbox_inches='tight', dpi=300)
+                fig_target.savefig("out/results/competitors/{}/tsne_original_{}_s{}_target.png".format(dname, dname, datasets[dname]['sensitives'][str(s)]), bbox_inches='tight', dpi=300)
                 plt.close(fig_sensitive)
                 plt.close(fig_target)
         else: tsne = None
         #results_cols = ['dataset', 'objs_no', 'n_bins', 'method', 'sensitive', 'competitor', 'competitor_params', 'groups', 'majority_group', 'z_tsne'] + ['means_competitor', 'means_dilca', 'time_competitor', 'time_dilca', 'pearson_objs', 'objs_distances_competitor', 'objs_distances_dilca']
         
-        results_csv_cols = ['dataset', 'objs_no', 'n_bins', 'method', 'sensitive', 'competitor', 'competitor_params', 'groups', 'majority_group', 'groups_sizes'] + ['means_competitor', 'means_MaG-Migs_competitor', 'means_dilca', 'means_MaG-Migs_dilca', 'time_competitor', 'time_dilca', 'pearson_objs_dilca', 'pearson_objs_original']
+        results_csv_cols = ['dataset', 'objs_no', 'n_bins', 'method', 'sensitive', 'competitor', 'competitor_params', 'groups', 'majority_group', 'groups_sizes'] + ['means_competitor', 'means_MaG-Migs_competitor', 'means_competitor_nn', 'means_MaG-Migs_competitor_nn', 'means_dilca', 'means_MaG-Migs_dilca', 'means_dilca_nn', 'means_MaG-Migs_dilca_nn', 'time_competitor', 'time_dilca', 'pearson_objs_dilca', 'pearson_objs_original']
         results_csv_df = pd.DataFrame(columns=results_csv_cols)
         results_df = pd.DataFrame(columns=results_csv_cols)
         
@@ -244,6 +249,7 @@ def main():
         for s in sensitives:
             # Means DILCA
             means_dilca, means_MaG_Migs_dilca, groups, group_sizes, majority_group = compute_groups_means(X, s, objs_distances_dilca)
+            means_dilca_nn, means_MaG_Migs_dilca_nn, groups, group_sizes, majority_group = compute_groups_means(X, s, objs_distances_dilca, normalise=False)
             
             end_time = time()
             t_sec_dilca = end_time - start_time
@@ -264,11 +270,11 @@ def main():
                             exp_no += 1
                             continue
                     print("{} # {} {} {}\t sensitive: {} ({})".format(dname, exp_no, competitor, competitor_params, datasets[dname]['sensitives'][str(s)], s))
-                    means_competitor, means_MaG_Migs_competitor, t_sec_competitor, pearson_competitor_dilca, pearson_competitor_original, objs_distances_competitor, z_tsne_competitor = cr_exps(Xne.copy(), Y, exp_no, datasets, X, s, objs_distances_dilca, objs_distances_original, sensitive=sensitive_column_indices, alpha=a, tsne=tsne, dataset=dname)
+                    means_competitor, means_MaG_Migs_competitor, means_competitor_nn, means_MaG_Migs_competitor_nn, t_sec_competitor, pearson_competitor_dilca, pearson_competitor_original, objs_distances_competitor, z_tsne_competitor = cr_exps(Xne.copy(), Y, exp_no, datasets, X, s, objs_distances_dilca, objs_distances_original, sensitive=sensitive_column_indices, alpha=a, tsne=tsne, dataset=dname)
                     
                     # results_df.loc[exp_no] = [dname, len(X), n_bins, m, datasets[dname]['sensitives'][str(s)], competitor, competitor_params, groups, majority_group, z_tsne_competitor, means_competitor, means_dilca, t_sec_competitor, t_sec_dilca, pearson_competitor_dilca, objs_distances_competitor, objs_distances_dilca]
-                    results_df.loc[exp_no] = [dname, len(X), n_bins, '', datasets[dname]['sensitives'][str(s)], competitor, competitor_params, groups, majority_group, group_sizes, means_competitor, means_MaG_Migs_competitor, means_dilca, means_MaG_Migs_dilca, t_sec_competitor, t_sec_dilca, pearson_competitor_dilca, pearson_competitor_original]
-                    results_csv_df.loc[exp_no] = [dname, len(X), n_bins, '', datasets[dname]['sensitives'][str(s)], competitor, competitor_params, groups, majority_group, group_sizes, means_competitor, means_MaG_Migs_competitor, means_dilca, means_MaG_Migs_dilca, t_sec_competitor, t_sec_dilca, pearson_competitor_dilca, pearson_competitor_original]
+                    results_df.loc[exp_no] = [dname, len(X), n_bins, '', datasets[dname]['sensitives'][str(s)], competitor, competitor_params, groups, majority_group, group_sizes, means_competitor, means_MaG_Migs_competitor, means_competitor_nn, means_MaG_Migs_competitor_nn, means_dilca, means_MaG_Migs_dilca, means_dilca_nn, means_MaG_Migs_dilca_nn, t_sec_competitor, t_sec_dilca, pearson_competitor_dilca, pearson_competitor_original]
+                    results_csv_df.loc[exp_no] = [dname, len(X), n_bins, '', datasets[dname]['sensitives'][str(s)], competitor, competitor_params, groups, majority_group, group_sizes, means_competitor, means_MaG_Migs_competitor, means_competitor_nn, means_MaG_Migs_competitor_nn, means_dilca, means_MaG_Migs_dilca, means_dilca_nn, means_MaG_Migs_dilca_nn, t_sec_competitor, t_sec_dilca, pearson_competitor_dilca, pearson_competitor_original]
                     exp_no += 1
                     results_df.to_pickle(checkpoint_path)
     # ------------------------------------

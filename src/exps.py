@@ -21,14 +21,18 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 
 Result = namedtuple('Result', ["tsec", "p", "dl1", "f1_score",  "ps_mean", "groups", "majority_group", "means_fair", "means_MaG_MiG_fair", "means_nf", "means_MaG_MiG_fair_nf", "ec", "bcss_fair", "bcss_nf", "group_sizes", "means_nn_f", "means_MaG_Migs_nn_f", "means_nn_nf", "means_MaG_Migs_nn_nf"])
 
-def plot_tsne(c, labels, ax):
-    for g in np.unique(labels):
+SENSITIVE_COLORS = [plt.cm.Dark2(i) for i in range(8)]
+TARGET_COLORS = [plt.cm.tab10(i) for i in range(10)]
+
+def plot_tsne(c, labels, ax, colors):
+    for index, g in enumerate(np.unique(labels)):
         i = np.where(labels == g)
-        ax.scatter(c[i,0], c[i, 1], label=g)
+        ax.scatter(c[i,0], c[i, 1], label=g, color=colors[index])
     ax.tick_params(axis='x', labelsize=16)
     ax.tick_params(axis='y', labelsize=16)
-    ax.legend(loc="upper center", framealpha=1, frameon=True, bbox_to_anchor=(0.5, -0.05), fancybox=True, shadow=False, ncol=len(labels), prop={'size': 22}, markerscale=2)
-    
+    #ax.legend(loc="upper center", framealpha=1, frameon=True, bbox_to_anchor=(0.5, -0.05), fancybox=True, shadow=False, ncol=len(labels), prop={'size': 22}, markerscale=2)
+    ax.legend(loc="best", prop={'size': 18}, markerscale=2)
+     
 def run_experiment_e(X, s, a, fm, m, sigma, missing_values, n_bins, obj_distances_nf, tsne, dataset, Y, dname, mode, datasets, distance_fairness=True):
     ec = False
     start_time = time()
@@ -51,8 +55,8 @@ def run_experiment_e(X, s, a, fm, m, sigma, missing_values, n_bins, obj_distance
             
             fig_sensitive, ax_sensitive = plt.subplots(figsize=(15, 10), dpi=300)
             fig_target, ax_target = plt.subplots(figsize=(15, 10), dpi=300)
-            plot_tsne(z, labels_sensitive, ax_sensitive)
-            plot_tsne(z, Y, ax_target)
+            plot_tsne(z, labels_sensitive, ax_sensitive, SENSITIVE_COLORS)
+            plot_tsne(z, Y, ax_target, TARGET_COLORS)
             fig_sensitive.tight_layout()
             fig_target.tight_layout()
             
@@ -206,12 +210,12 @@ def main():
                 labels_sensitive = X[s]
                 fig_sensitive, ax_sensitive = plt.subplots(figsize=(15, 10), dpi=300)
                 fig_target, ax_target = plt.subplots(figsize=(15, 10), dpi=300)
-                plot_tsne(z_nf, labels_sensitive, ax_sensitive)
-                plot_tsne(z_nf, Y, ax_target)
+                plot_tsne(z_nf, labels_sensitive, ax_sensitive, SENSITIVE_COLORS)
+                plot_tsne(z_nf, Y, ax_target, TARGET_COLORS)
                 fig_sensitive.tight_layout()
                 fig_target.tight_layout()
                 fig_sensitive.savefig("out/results/{}/tsne_dilca_{}_s{}.png".format(dname, m, datasets[dname]['sensitives'][str(s)]), bbox_inches='tight', dpi=300)
-                fig_target.savefig("out/results/{}/tsne_dilca_{}_target.png".format(dname, m), bbox_inches='tight', dpi=300)
+                fig_target.savefig("out/results/{}/tsne_dilca_{}_s{}_target.png".format(dname, m, datasets[dname]['sensitives'][str(s)]), bbox_inches='tight', dpi=300)
                 plt.close(fig_sensitive)
                 plt.close(fig_target)
             else: tsne = None
