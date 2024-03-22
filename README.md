@@ -15,7 +15,7 @@ This repository is organised as follows:
 	- `competitors.py`: code for competitors experiments.
 
 ## Usage
-	Usage of experiments scripts:
+Usage of experiments scripts:
 - **Normal** (`exps.py`): `dataset_name n_bins [-max_size int] [-tsne True]`;
 - **Clustering** (`exps_clustering.py`): `dataset_name n_bins [-max_size int]`;
 - **KNN** (`exps_knn.py`): `dataset_name n_bins [-max_size int]`;
