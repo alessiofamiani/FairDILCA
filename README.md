@@ -11,7 +11,8 @@ This repository is organised as follows:
 	- **`utils`**: contains data handling utility functions and metrics computation functions;
 	- `exps_clustering.py`: code for clustering experiments;
 	- `exps_knn.py`: code for KNN experiments;
-	- `exps.py`: code for experiments on the ouputs of the FairDILCA framework.
+	- `exps.py`: code for experiments on the ouputs of the FairDILCA framework;
+	- `competitors.py`: code for competitors experiments.
 
 ## Usage
 Usage of experiments scripts:
